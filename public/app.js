@@ -483,7 +483,6 @@ async function saveText() {
   try {
     await API.saveText(content, getSelectedCategoryId());
     textInput.value = "";
-    textInput.style.height = "auto";
     showToast("Da luu van ban");
     loadItems();
     loadCategories();
@@ -668,13 +667,7 @@ function toggleSidebar() {
 // ========== Event Listeners ==========
 saveTextBtn.addEventListener("click", saveText);
 textInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) saveText();
-});
-
-// Auto-resize textarea
-textInput.addEventListener("input", () => {
-  textInput.style.height = "auto";
-  textInput.style.height = textInput.scrollHeight + "px";
+  if (e.key === "Enter") saveText();
 });
 
 fileInput.addEventListener("change", (e) => {

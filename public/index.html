@@ -218,32 +218,15 @@
         <section class="input-bar" id="pasteZone" tabindex="0">
           <input type="file" id="fileInput" accept="image/*" multiple hidden />
           <input type="file" id="anyFileInput" multiple hidden />
-          <textarea
-            id="textInput"
-            placeholder="Nhap van ban, dan anh, keo tha file..."
-            rows="1"
-          ></textarea>
-          <div class="input-bar-actions">
-            <button
-              class="input-action-btn"
-              onclick="document.getElementById('fileInput').click()"
-            >
-              Anh
-            </button>
-            <button
-              class="input-action-btn"
-              onclick="document.getElementById('anyFileInput').click()"
-            >
-              File
-            </button>
-            <select id="categorySelect" class="input-category-select">
-              <!-- Rendered by JS -->
-            </select>
-          </div>
+          <button class="input-action-btn" onclick="document.getElementById('fileInput').click()" title="Tai anh len">Anh</button>
+          <button class="input-action-btn" onclick="document.getElementById('anyFileInput').click()" title="Tai file len">File</button>
+          <select id="categorySelect" class="input-category-select"></select>
+          <input type="text" id="textInput" placeholder="Nhap van ban, dan anh, keo tha file..." autocomplete="off" />
           <button class="input-send-btn" id="saveTextBtn">Luu</button>
         </section>
       </main>
     </div>
+
 
     <!-- Image preview modal -->
     <div id="imageModal" class="modal" onclick="closeModal(event)">
