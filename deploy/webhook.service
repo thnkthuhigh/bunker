@@ -1,0 +1,19 @@
+[Unit]
+Description=GitHub Webhook Auto-Deploy Listener
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/cloud-clipboard
+ExecStart=/usr/bin/node deploy/webhook.js
+Restart=always
+RestartSec=5
+Environment=WEBHOOK_SECRET=your-secret-here
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=webhook-deploy
+
+[Install]
+WantedBy=multi-user.target

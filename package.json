@@ -7,7 +7,12 @@
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
-  "keywords": ["clipboard", "cloud", "self-hosted", "image-storage"],
+  "keywords": [
+    "clipboard",
+    "cloud",
+    "self-hosted",
+    "image-storage"
+  ],
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
