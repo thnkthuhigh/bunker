@@ -33,7 +33,7 @@ db.exec(`
 db.exec(`
   CREATE TABLE IF NOT EXISTS items (
     id TEXT PRIMARY KEY,
-    type TEXT NOT NULL CHECK(type IN ('text', 'image')),
+    type TEXT NOT NULL CHECK(type IN ('text', 'image', 'file')),
     content TEXT,
     filename TEXT,
     original_name TEXT,
@@ -45,6 +45,13 @@ db.exec(`
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
   )
 `);
+
+// Migrate: add 'file' to type check if upgrading from old schema
+try {
+  db.exec(`ALTER TABLE items DROP CONSTRAINT IF EXISTS items_type_check`);
+} catch (e) {
+  /* ignore if not supported */
+}
 
 // Seed default category
 const catCount = db.prepare("SELECT COUNT(*) as c FROM categories").get().c;
@@ -69,13 +76,18 @@ const storage = multer.diskStorage({
     cb(null, `${uuidv4()}${ext}`);
   },
 });
-const upload = multer({
+const uploadImage = multer({
   storage,
   limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) cb(null, true);
     else cb(new Error("Only image files are allowed"), false);
   },
+});
+
+const uploadFile = multer({
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 },
 });
 
 // ========== Categories ==========
@@ -222,7 +234,7 @@ app.post("/api/items/text", (req, res) => {
   res.status(201).json(item);
 });
 
-app.post("/api/items/image", upload.single("image"), (req, res) => {
+app.post("/api/items/image", uploadImage.single("image"), (req, res) => {
   if (!req.file)
     return res.status(400).json({ error: "Image file is required" });
   const category_id = req.body.category_id || null;
@@ -232,6 +244,27 @@ app.post("/api/items/image", upload.single("image"), (req, res) => {
   ).run(
     id,
     "image",
+    req.file.filename,
+    req.file.originalname,
+    req.file.mimetype,
+    req.file.size,
+    category_id,
+  );
+  const item = db.prepare(ITEM_SELECT + " WHERE items.id = ?").get(id);
+  res.status(201).json(item);
+});
+
+// Upload any file
+app.post("/api/items/file", uploadFile.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "File is required" });
+  const category_id = req.body.category_id || null;
+  const id = uuidv4();
+  const itemType = req.file.mimetype.startsWith("image/") ? "image" : "file";
+  db.prepare(
+    "INSERT INTO items (id, type, filename, original_name, mime_type, file_size, category_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+  ).run(
+    id,
+    itemType,
     req.file.filename,
     req.file.originalname,
     req.file.mimetype,
@@ -317,7 +350,7 @@ app.delete("/api/items/:id", (req, res) => {
   const { id } = req.params;
   const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
   if (!item) return res.status(404).json({ error: "Item not found" });
-  if (item.type === "image" && item.filename) {
+  if ((item.type === "image" || item.type === "file") && item.filename) {
     const filePath = path.join(uploadsDir, item.filename);
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
   }
@@ -329,8 +362,8 @@ app.get("/api/items/:id/download", (req, res) => {
   const { id } = req.params;
   const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
   if (!item) return res.status(404).json({ error: "Item not found" });
-  if (item.type !== "image")
-    return res.status(400).json({ error: "Not an image item" });
+  if (item.type === "text")
+    return res.status(400).json({ error: "Cannot download text items" });
   const filePath = path.join(uploadsDir, item.filename);
   if (!fs.existsSync(filePath))
     return res.status(404).json({ error: "File not found" });

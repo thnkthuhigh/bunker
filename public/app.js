@@ -45,6 +45,14 @@ const API = {
     if (!res.ok) throw new Error("Failed to upload");
     return res.json();
   },
+  async uploadFile(file, category_id) {
+    const fd = new FormData();
+    fd.append("file", file);
+    if (category_id) fd.append("category_id", category_id);
+    const res = await fetch("/api/items/file", { method: "POST", body: fd });
+    if (!res.ok) throw new Error("Failed to upload");
+    return res.json();
+  },
   async pasteImage(imageData, filename, category_id) {
     const res = await fetch("/api/items/paste", {
       method: "POST",
@@ -390,6 +398,33 @@ function renderItem(item) {
           <button class="btn-icon" onclick="deleteItem('${item.id}')" title="Xoa">${ICONS.trash}</button>
         </div>
       </div>`;
+  } else if (item.type === "file") {
+    const ext =
+      (item.original_name || item.filename || "").split(".").pop() || "?";
+    card.innerHTML = `
+      <div class="card-file-content">
+        <svg class="card-file-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+          <polyline points="13 2 13 9 20 9"/>
+        </svg>
+        <div class="card-file-info">
+          <div class="card-file-name" title="${escapeHtml(item.original_name || item.filename)}">${escapeHtml(item.original_name || item.filename)}</div>
+          <div class="card-file-ext">${escapeHtml(ext)} &middot; ${formatSize(item.file_size)}</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-meta">
+          <span class="badge badge-file">FILE</span>
+          ${catBadge}
+          <span>${formatDate(item.created_at)}</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn-icon ${item.pinned ? "pin-active" : ""}" onclick="togglePin('${item.id}')" title="Ghim">${ICONS.pin}</button>
+          <button class="btn-icon" onclick="openMoveCategory('${item.id}')" title="Chuyen danh muc">${ICONS.folder}</button>
+          <button class="btn-icon" onclick="downloadImage('${item.id}')" title="Tai ve">${ICONS.download}</button>
+          <button class="btn-icon" onclick="deleteItem('${item.id}')" title="Xoa">${ICONS.trash}</button>
+        </div>
+      </div>`;
   } else {
     card.innerHTML = `
       <div class="card-text-content">${escapeHtml(item.content)}</div>
@@ -470,6 +505,21 @@ async function uploadFiles(files) {
     } catch {}
   }
   showToast(`Da tai len ${ok}/${imgs.length} anh`);
+  loadItems();
+  loadCategories();
+}
+
+async function uploadAnyFiles(files) {
+  const all = Array.from(files);
+  if (!all.length) return;
+  let ok = 0;
+  for (const file of all) {
+    try {
+      await API.uploadFile(file, getSelectedCategoryId());
+      ok++;
+    } catch {}
+  }
+  showToast(`Da tai len ${ok}/${all.length} file`);
   loadItems();
   loadCategories();
 }
@@ -623,6 +673,14 @@ textInput.addEventListener("keydown", (e) => {
 fileInput.addEventListener("change", (e) => {
   if (e.target.files.length > 0) {
     uploadFiles(e.target.files);
+    e.target.value = "";
+  }
+});
+
+const anyFileInput = document.getElementById("anyFileInput");
+anyFileInput.addEventListener("change", (e) => {
+  if (e.target.files.length > 0) {
+    uploadAnyFiles(e.target.files);
     e.target.value = "";
   }
 });
