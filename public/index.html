@@ -182,46 +182,6 @@
       </header>
 
       <main class="container">
-        <!-- Upload area -->
-        <section class="input-bar" id="pasteZone" tabindex="0">
-          <div class="input-bar-top">
-            <textarea
-              id="textInput"
-              placeholder="Nhap van ban, hoac Ctrl+V dan anh, keo tha file vao day..."
-              rows="1"
-            ></textarea>
-          </div>
-          <div class="input-bar-bottom">
-            <div class="input-bar-actions">
-              <input
-                type="file"
-                id="fileInput"
-                accept="image/*"
-                multiple
-                hidden
-              />
-              <button
-                class="input-action-btn"
-                onclick="document.getElementById('fileInput').click()"
-              >
-                Anh
-              </button>
-              <input type="file" id="anyFileInput" multiple hidden />
-              <button
-                class="input-action-btn"
-                onclick="document.getElementById('anyFileInput').click()"
-              >
-                File
-              </button>
-              <span class="input-divider"></span>
-              <select id="categorySelect" class="input-category-select">
-                <!-- Rendered by JS -->
-              </select>
-            </div>
-            <button class="input-send-btn" id="saveTextBtn">Luu</button>
-          </div>
-        </section>
-
         <!-- Items grid -->
         <section id="itemsGrid" class="items-grid">
           <!-- Items will be rendered here -->
@@ -253,6 +213,21 @@
             Dan anh (Ctrl+V), keo tha, hoac nhap van ban de bat dau
           </p>
         </div>
+
+        <!-- Bottom input bar -->
+        <section class="input-bar" id="pasteZone" tabindex="0">
+          <input type="file" id="fileInput" accept="image/*" multiple hidden />
+          <input type="file" id="anyFileInput" multiple hidden />
+          <textarea id="textInput" placeholder="Nhap van ban, dan anh, keo tha file..." rows="1"></textarea>
+          <div class="input-bar-actions">
+            <button class="input-action-btn" onclick="document.getElementById('fileInput').click()">Anh</button>
+            <button class="input-action-btn" onclick="document.getElementById('anyFileInput').click()">File</button>
+            <select id="categorySelect" class="input-category-select">
+              <!-- Rendered by JS -->
+            </select>
+          </div>
+          <button class="input-send-btn" id="saveTextBtn">Luu</button>
+        </section>
       </main>
     </div>
 
