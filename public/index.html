@@ -185,14 +185,34 @@
         <!-- Upload area -->
         <section class="input-bar" id="pasteZone" tabindex="0">
           <div class="input-bar-top">
-            <textarea id="textInput" placeholder="Nhap van ban, hoac Ctrl+V dan anh, keo tha file vao day..." rows="1"></textarea>
+            <textarea
+              id="textInput"
+              placeholder="Nhap van ban, hoac Ctrl+V dan anh, keo tha file vao day..."
+              rows="1"
+            ></textarea>
           </div>
           <div class="input-bar-bottom">
             <div class="input-bar-actions">
-              <input type="file" id="fileInput" accept="image/*" multiple hidden />
-              <button class="input-action-btn" onclick="document.getElementById('fileInput').click()">Anh</button>
+              <input
+                type="file"
+                id="fileInput"
+                accept="image/*"
+                multiple
+                hidden
+              />
+              <button
+                class="input-action-btn"
+                onclick="document.getElementById('fileInput').click()"
+              >
+                Anh
+              </button>
               <input type="file" id="anyFileInput" multiple hidden />
-              <button class="input-action-btn" onclick="document.getElementById('anyFileInput').click()">File</button>
+              <button
+                class="input-action-btn"
+                onclick="document.getElementById('anyFileInput').click()"
+              >
+                File
+              </button>
               <span class="input-divider"></span>
               <select id="categorySelect" class="input-category-select">
                 <!-- Rendered by JS -->
