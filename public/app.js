@@ -465,7 +465,27 @@ async function loadItems() {
     }
 
     const frag = document.createDocumentFragment();
-    items.forEach((item) => frag.appendChild(renderItem(item)));
+    let lastDateStr = null;
+    items.forEach((item) => {
+      const d = new Date(item.created_at + "Z");
+      const dateStr = d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+      if (dateStr !== lastDateStr) {
+        const sep = document.createElement("div");
+        sep.className = "date-separator";
+        const today = new Date();
+        const isToday = d.toDateString() === today.toDateString();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const isYesterday = d.toDateString() === yesterday.toDateString();
+        let label = dateStr;
+        if (isToday) label = "Hom nay";
+        else if (isYesterday) label = "Hom qua";
+        sep.innerHTML = `<span>${label}</span>`;
+        frag.appendChild(sep);
+        lastDateStr = dateStr;
+      }
+      frag.appendChild(renderItem(item));
+    });
     itemsGrid.appendChild(frag);
   } catch (err) {
     loading.style.display = "none";

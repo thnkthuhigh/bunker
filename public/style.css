@@ -582,17 +582,49 @@ section.input-bar > button.input-send-btn:hover {
 
 /* ========== Items Grid ========== */
 .items-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 0.8rem;
-  align-content: start;
-  align-items: start;
+  column-count: 3;
+  column-gap: 0.8rem;
 }
 
+.items-grid > * {
+  break-inside: avoid;
+  margin-bottom: 0.8rem;
+}
+
+@media (max-width: 900px) {
+  .items-grid {
+    column-count: 2;
+  }
+}
 @media (max-width: 640px) {
   .items-grid {
-    grid-template-columns: 1fr;
+    column-count: 1;
   }
+}
+
+/* Date separator */
+.date-separator {
+  column-span: all;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  margin-bottom: 0.8rem;
+}
+.date-separator::before,
+.date-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.date-separator span {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 /* ========== Card ========== */
