@@ -14,9 +14,6 @@ Environment=PORT=3000
 
 # Security hardening
 NoNewPrivileges=true
-ProtectSystem=strict
-ProtectHome=read-only
-ReadWritePaths=/home/ubuntu/cloud-clipboard/uploads /home/ubuntu/cloud-clipboard/clipboard.db /home/ubuntu/cloud-clipboard/clipboard.db-wal /home/ubuntu/cloud-clipboard/clipboard.db-shm
 
 # Logging
 StandardOutput=journal
