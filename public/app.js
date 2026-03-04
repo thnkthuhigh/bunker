@@ -468,7 +468,11 @@ async function loadItems() {
     let lastDateStr = null;
     items.forEach((item) => {
       const d = new Date(item.created_at + "Z");
-      const dateStr = d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+      const dateStr = d.toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
       if (dateStr !== lastDateStr) {
         const sep = document.createElement("div");
         sep.className = "date-separator";

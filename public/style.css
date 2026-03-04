@@ -613,7 +613,7 @@ section.input-bar > button.input-send-btn:hover {
 }
 .date-separator::before,
 .date-separator::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 1px;
   background: var(--border);
