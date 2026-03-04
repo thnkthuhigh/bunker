@@ -483,6 +483,7 @@ async function saveText() {
   try {
     await API.saveText(content, getSelectedCategoryId());
     textInput.value = "";
+    textInput.style.height = "auto";
     showToast("Da luu van ban");
     loadItems();
     loadCategories();
@@ -670,6 +671,12 @@ textInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) saveText();
 });
 
+// Auto-resize textarea
+textInput.addEventListener("input", () => {
+  textInput.style.height = "auto";
+  textInput.style.height = textInput.scrollHeight + "px";
+});
+
 fileInput.addEventListener("change", (e) => {
   if (e.target.files.length > 0) {
     uploadFiles(e.target.files);
@@ -697,14 +704,14 @@ pasteZone.addEventListener("dragleave", () =>
 pasteZone.addEventListener("drop", (e) => {
   e.preventDefault();
   pasteZone.classList.remove("dragover");
-  if (e.dataTransfer.files.length > 0) uploadFiles(e.dataTransfer.files);
+  if (e.dataTransfer.files.length > 0) uploadAnyFiles(e.dataTransfer.files);
 });
 
 document.addEventListener("dragover", (e) => e.preventDefault());
 document.addEventListener("drop", (e) => {
   e.preventDefault();
   if (e.dataTransfer.files.length > 0 && !pasteZone.contains(e.target))
-    uploadFiles(e.dataTransfer.files);
+    uploadAnyFiles(e.dataTransfer.files);
 });
 
 // Type filters
