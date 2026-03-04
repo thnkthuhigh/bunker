@@ -371,7 +371,9 @@ body {
   border-radius: 999px;
   padding: 0.35rem 0.35rem 0.35rem 0.6rem;
   margin-top: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   outline: none;
   height: 44px;
 }
