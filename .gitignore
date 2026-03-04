@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Database
+clipboard.db
+clipboard.db-wal
+clipboard.db-shm
+
+# Uploads
+uploads/
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

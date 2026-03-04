@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloud Clipboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='20' width='100' height='100' fill='%236c5ce7'/><path d='M50 25c-12 0-22 8-24 19-7 1-13 8-13 16 0 9 7 16 16 16h42c9 0 16-7 16-16 0-8-6-15-13-16C72 33 62 25 50 25z' fill='white'/></svg>"
+    />
+  </head>
+  <body>
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+          </svg>
+          <span>Cloud Clipboard</span>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle" title="Thu gon">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Categories -->
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Danh muc</div>
+        <ul class="category-list" id="categoryList">
+          <!-- Rendered by JS -->
+        </ul>
+        <button class="add-category-btn" id="addCategoryBtn">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          <span>Them danh muc</span>
+        </button>
+      </nav>
+
+      <!-- Type filter -->
+      <div class="sidebar-footer">
+        <div class="nav-section-title">Bo loc</div>
+        <div class="type-filters">
+          <button class="type-filter-btn active" data-filter="all">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+            <span>Tat ca</span>
+          </button>
+          <button class="type-filter-btn" data-filter="image">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <span>Anh</span>
+          </button>
+          <button class="type-filter-btn" data-filter="text">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+            <span>Van ban</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main-wrapper" id="mainWrapper">
+      <header class="topbar">
+        <button class="sidebar-open-btn" id="sidebarOpenBtn">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+        <div class="search-box">
+          <svg
+            class="search-icon"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Tim kiem noi dung..."
+            class="search-input"
+          />
+        </div>
+        <div class="topbar-right">
+          <span class="item-count" id="itemCount"></span>
+        </div>
+      </header>
+
+      <main class="container">
+        <!-- Upload area -->
+        <section class="upload-section">
+          <div id="pasteZone" class="paste-zone" tabindex="0">
+            <svg
+              class="paste-zone-icon"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <p class="paste-main">
+              Nhan <kbd>Ctrl+V</kbd> de dan anh tu clipboard
+            </p>
+            <p class="paste-sub">hoac keo tha anh vao day</p>
+            <input
+              type="file"
+              id="fileInput"
+              accept="image/*"
+              multiple
+              hidden
+            />
+            <button
+              class="btn btn-outline"
+              onclick="document.getElementById('fileInput').click()"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              Chon anh tu may
+            </button>
+          </div>
+
+          <div class="text-input-area">
+            <div class="text-input-row">
+              <select id="categorySelect" class="category-select">
+                <!-- Rendered by JS -->
+              </select>
+            </div>
+            <textarea
+              id="textInput"
+              placeholder="Nhap noi dung van ban can luu..."
+              rows="3"
+            ></textarea>
+            <button class="btn btn-primary" id="saveTextBtn">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1-2 2h11l5 5v11a2 2 0 0 1-2 2z"
+                />
+                <polyline points="17 21 17 13 7 13 7 21" />
+                <polyline points="7 3 7 8 15 8" />
+              </svg>
+              Luu van ban
+            </button>
+          </div>
+        </section>
+
+        <!-- Items grid -->
+        <section id="itemsGrid" class="items-grid">
+          <!-- Items will be rendered here -->
+        </section>
+
+        <!-- Loading -->
+        <div id="loading" class="loading" style="display: none">
+          <div class="spinner"></div>
+          <p>Dang tai...</p>
+        </div>
+
+        <!-- Empty state -->
+        <div id="emptyState" class="empty-state" style="display: none">
+          <svg
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            opacity="0.4"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <p class="empty-title">Chua co noi dung nao</p>
+          <p class="empty-hint">
+            Dan anh (Ctrl+V), keo tha, hoac nhap van ban de bat dau
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <!-- Image preview modal -->
+    <div id="imageModal" class="modal" onclick="closeModal(event)">
+      <div class="modal-content">
+        <img id="modalImage" src="" alt="" />
+        <div class="modal-actions">
+          <button class="btn btn-primary" onclick="downloadModalImage()">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Tai ve
+          </button>
+          <button class="btn btn-outline" onclick="copyModalImage()">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path
+                d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+              />
+            </svg>
+            Copy anh
+          </button>
+          <button class="btn btn-ghost" onclick="closeModal()">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+            Dong
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category modal -->
+    <div id="categoryModal" class="modal" onclick="closeCategoryModal(event)">
+      <div class="modal-dialog">
+        <div class="modal-dialog-header">
+          <h3 id="categoryModalTitle">Them danh muc</h3>
+          <button class="btn-close" onclick="closeCategoryModal()">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <label class="form-label">Ten danh muc</label>
+          <input
+            type="text"
+            id="categoryNameInput"
+            class="form-input"
+            placeholder="Nhap ten danh muc..."
+          />
+          <label class="form-label" style="margin-top: 0.75rem">Mau sac</label>
+          <div class="color-picker" id="colorPicker">
+            <button
+              class="color-swatch active"
+              data-color="#6c5ce7"
+              style="background: #6c5ce7"
+            ></button>
+            <button
+              class="color-swatch"
+              data-color="#0984e3"
+              style="background: #0984e3"
+            ></button>
+            <button
+              class="color-swatch"
+              data-color="#00b894"
+              style="background: #00b894"
+            ></button>
+            <button
+              class="color-swatch"
+              data-color="#e17055"
+              style="background: #e17055"
+            ></button>
+            <button
+              class="color-swatch"
+              data-color="#fdcb6e"
+              style="background: #fdcb6e"
+            ></button>
+            <button
+              class="color-swatch"
+              data-color="#e84393"
+              style="background: #e84393"
+            ></button>
+            <button
+              class="color-swatch"
+              data-color="#636e72"
+              style="background: #636e72"
+            ></button>
+            <button
+              class="color-swatch"
+              data-color="#00cec9"
+              style="background: #00cec9"
+            ></button>
+          </div>
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-ghost" onclick="closeCategoryModal()">
+            Huy
+          </button>
+          <button class="btn btn-primary" id="saveCategoryBtn">Luu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Move to category modal -->
+    <div
+      id="moveCategoryModal"
+      class="modal"
+      onclick="closeMoveCategoryModal(event)"
+    >
+      <div class="modal-dialog">
+        <div class="modal-dialog-header">
+          <h3>Chuyen danh muc</h3>
+          <button class="btn-close" onclick="closeMoveCategoryModal()">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <ul class="move-category-list" id="moveCategoryList">
+            <!-- Rendered by JS -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
