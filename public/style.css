@@ -356,6 +356,7 @@ body {
   min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 /* ========== Input Bar (bottom chat-style) ========== */
@@ -584,7 +585,8 @@ section.input-bar > button.input-send-btn:hover {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 0.8rem;
-  flex: 1;
+  align-content: start;
+  align-items: start;
 }
 
 @media (max-width: 640px) {
