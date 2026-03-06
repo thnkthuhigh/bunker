@@ -445,10 +445,14 @@ function renderItem(item) {
   return card;
 }
 
-async function loadItems() {
-  loading.style.display = "block";
-  emptyState.style.display = "none";
-  itemsGrid.innerHTML = "";
+let lastItemsHash = "";
+
+async function loadItems(silent) {
+  if (!silent) {
+    loading.style.display = "block";
+    emptyState.style.display = "none";
+    itemsGrid.innerHTML = "";
+  }
 
   try {
     const { items, total } = await API.getItems(
@@ -459,10 +463,18 @@ async function loadItems() {
     loading.style.display = "none";
     itemCount.textContent = `${total} muc`;
 
+    // Skip re-render if data hasn't changed
+    const hash = JSON.stringify(items.map(i => i.id + i.pinned + i.category_id));
+    if (silent && hash === lastItemsHash) return;
+    lastItemsHash = hash;
+
+    itemsGrid.innerHTML = "";
+
     if (items.length === 0) {
       emptyState.style.display = "flex";
       return;
     }
+    emptyState.style.display = "none";
 
     const frag = document.createDocumentFragment();
     let lastDateStr = null;
@@ -807,6 +819,6 @@ document.addEventListener("keydown", (e) => {
 loadCategories();
 loadItems();
 setInterval(() => {
-  loadItems();
+  loadItems(true);
   loadCategories();
-}, 10000);
+}, 30000);
